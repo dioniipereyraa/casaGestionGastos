@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 Casa Gastos - Gestión del Hogar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstra                            <div class="card-body">
+                                <!-- Sección de upload de factura con AI -->
+                                <d                            <div class="card-body">
+                                <!-- Sección de upload de comprobante con AI -->
+                                <div id="facturaUpload-ingreso" class="mb-4 p-3 border rounded bg-light" style="display: none;">
+                                    <h6 class="text-success"><i class="bi bi-robot"></i> Procesamiento con AI</h6>
+                                    <div class="mb-3">
+                                        <label for="facturaFile-ingreso" class="form-label">Sube tu comprobante de ingreso</label>
+                                        <input type="file" class="form-control" id="facturaFile-ingreso" accept="image/*" onchange="procesarFactura('ingreso')">
+                                        <div class="form-text">Formatos: JPG, PNG. Máximo 10MB</div>
+                                    </div>
+                                    <div id="processingStatus-ingreso" style="display: none;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+                                            <span>Procesando con AI... esto puede tomar unos segundos</span>
+                                        </div>
+                                    </div>
+                                    <div id="aiResults-ingreso" style="display: none;">
+                                        <!-- Los resultados del AI se mostrarán aquí -->
+                                    </div>
+                                </div>
+
+                                <form action="/agregar-ingreso" method="POST" id="form-ingreso-manual">\n id="facturaUpload-gasto" class="mb-4 p-3 border rounded bg-light" style="display: none;">
+                                    <h6 class="text-primary"><i class="bi bi-robot"></i> Procesamiento con AI</h6>
+                                    <div class="mb-3">
+                                        <label for="facturaFile-gasto" class="form-label">Sube tu factura o recibo</label>
+                                        <input type="file" class="form-control" id="facturaFile-gasto" accept="image/*" onchange="procesarFactura('gasto')">
+                                        <div class="form-text">Formatos: JPG, PNG. Máximo 10MB</div>
+                                    </div>
+                                    <div id="processingStatus-gasto" style="display: none;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                            <span>Procesando con AI... esto puede tomar unos segundos</span>
+                                        </div>
+                                    </div>
+                                    <div id="aiResults-gasto" style="display: none;">
+                                        <!-- Los resultados del AI se mostrarán aquí -->
+                                    </div>
+                                </div>
+
+                                <form action="/agregar-gasto" method="POST" id="form-gasto-manual">\n5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .card-header {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+        .stats-card {
+            border-left: 4px solid;
+            transition: transform 0.2s;
+        }
+        .stats-card:hover {
+            transform: translateY(-2px);
+        }
+        .gastos-card { border-left-color: #dc3545; }
+        .ingresos-card { border-left-color: #28a745; }
+        .balance-card { border-left-color: #17a2b8; }
+        .balance-positivo { color: #28a745; }
+        .balance-negativo { color: #dc3545; }
+        .categoria-badge {
+            border-radius: 15px;
+            padding: 4px 8px;
+            font-size: 0.8em;
+            color: white;
+        }
+        .nav-pills .nav-link {
+            margin: 0 5px;
+            border-radius: 20px;
+        }
+        .nav-pills .nav-link.active {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+        .form-floating > .form-select {
+            padding-top: 1.625rem;
+            padding-bottom: 0.625rem;
+        }
+        .category-stats {
+            border-radius: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container-fluid mt-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2 class="mb-0"><i class="bi bi-house-heart"></i> Casa Pereyra Bocchio - Gestión del Hogar</h2>
+                        <small>Control de ingresos y gastos del hogar.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas principales -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card gastos-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-arrow-down-circle text-danger fs-1"></i>
+                        <h5 class="card-title mt-2">Gastos del Mes</h5>
+                        <h4 class="text-danger">$<%= parseFloat(totalGastosMes).toLocaleString('es-AR') %></h4>
+                        <small class="text-muted">Total gastado este mes</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card ingresos-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-arrow-up-circle text-success fs-1"></i>
+                        <h5 class="card-title mt-2">Ingresos del Mes</h5>
+                        <h4 class="text-success">$<%= parseFloat(totalIngresosMes).toLocaleString('es-AR') %></h4>
+                        <small class="text-muted">Total ingresado este mes</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card balance-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-calculator text-info fs-1"></i>
+                        <h5 class="card-title mt-2">Balance del Mes</h5>
+                        <h4 class="<%= balanceMes >= 0 ? 'balance-positivo' : 'balance-negativo' %>">
+                            $<%= parseFloat(balanceMes).toLocaleString('es-AR') %>
+                        </h4>
+                        <small class="text-muted">Ingresos - Gastos</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card stats-card h-100" style="border-left-color: #6f42c1;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-piggy-bank text-purple fs-1" style="color: #6f42c1;"></i>
+                        <h5 class="card-title mt-2">Balance Total</h5>
+                        <h4 class="<%= balanceGeneral >= 0 ? 'balance-positivo' : 'balance-negativo' %>">
+                            $<%= parseFloat(balanceGeneral).toLocaleString('es-AR') %>
+                        </h4>
+                        <small class="text-muted">Saldo acumulado</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación por pestañas -->
+        <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="dashboard-tab" data-bs-toggle="pill" data-bs-target="#dashboard" type="button" role="tab">
+                    <i class="bi bi-speedometer2"></i> Dashboard
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="gastos-tab" data-bs-toggle="pill" data-bs-target="#gastos" type="button" role="tab">
+                    <i class="bi bi-arrow-down-circle"></i> Gastos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="ingresos-tab" data-bs-toggle="pill" data-bs-target="#ingresos" type="button" role="tab">
+                    <i class="bi bi-arrow-up-circle"></i> Ingresos
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="categorias-tab" data-bs-toggle="pill" data-bs-target="#categorias" type="button" role="tab">
+                    <i class="bi bi-tags"></i> Categorías
+                </button>
+            </li>
+        </ul>
+
+        <!-- Contenido de las pestañas -->
+        <div class="tab-content" id="pills-tabContent">
+            <!-- Dashboard -->
+            <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+                <div class="row">
+                    <!-- Gastos por categoría -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Gastos por Categoría (Este Mes)</h5>
+                            </div>
+                            <div class="card-body">
+                                <% if (gastosPorCategoria.length > 0) { %>
+                                    <% gastosPorCategoria.forEach(categoria => { %>
+                                        <div class="category-stats">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="categoria-badge" style="background-color: <%= categoria.color %>">
+                                                        <%= categoria.nombre %>
+                                                    </span>
+                                                </div>
+                                                <strong>$<%= parseFloat(categoria.total).toLocaleString('es-AR') %></strong>
+                                            </div>
+                                            <div class="progress mt-2" style="height: 8px;">
+                                                <div class="progress-bar" 
+                                                     style="width: <%= totalGastosMes > 0 ? (categoria.total/totalGastosMes*100) : 0 %>%; background-color: <%= categoria.color %>">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p class="text-muted text-center">No hay gastos registrados este mes</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Últimos movimientos -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Últimos Movimientos</h5>
+                            </div>
+                            <div class="card-body">
+                                <div style="max-height: 400px; overflow-y: auto;">
+                                    <% 
+                                    // Combinar gastos e ingresos y ordenar por fecha
+                                    let movimientos = [];
+                                    gastos.slice(0, 5).forEach(gasto => {
+                                        movimientos.push({
+                                            tipo: 'gasto',
+                                            fecha: gasto.fecha_gasto,
+                                            descripcion: gasto.descripcion,
+                                            monto: gasto.monto,
+                                            categoria: gasto.categoria_nombre,
+                                            color: gasto.categoria_color
+                                        });
+                                    });
+                                    ingresos.slice(0, 5).forEach(ingreso => {
+                                        movimientos.push({
+                                            tipo: 'ingreso',
+                                            fecha: ingreso.fecha_ingreso,
+                                            descripcion: ingreso.descripcion,
+                                            monto: ingreso.monto,
+                                            categoria: ingreso.categoria_nombre,
+                                            color: ingreso.categoria_color
+                                        });
+                                    });
+                                    movimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+                                    %>
+                                    
+                                    <% movimientos.slice(0, 10).forEach(mov => { %>
+                                        <div class="d-flex justify-content-between align-items-center border-bottom py-2">
+                                            <div>
+                                                <div class="fw-bold">
+                                                    <i class="bi bi-<%= mov.tipo === 'gasto' ? 'arrow-down' : 'arrow-up' %> text-<%= mov.tipo === 'gasto' ? 'danger' : 'success' %>"></i>
+                                                    <%= mov.descripcion %>
+                                                </div>
+                                                <small class="text-muted">
+                                                    <%= new Date(mov.fecha).toLocaleDateString() %>
+                                                    <% if (mov.categoria) { %>
+                                                        • <span class="categoria-badge" style="background-color: <%= mov.color %>"><%= mov.categoria %></span>
+                                                    <% } %>
+                                                </small>
+                                            </div>
+                                            <strong class="text-<%= mov.tipo === 'gasto' ? 'danger' : 'success' %>">
+                                                <%= mov.tipo === 'gasto' ? '-' : '+' %>$<%= parseFloat(mov.monto).toLocaleString('es-AR') %>
+                                            </strong>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña Gastos -->
+            <div class="tab-pane fade" id="gastos" role="tabpanel">
+                <div class="row">
+                    <!-- Formulario agregar gasto -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Agregar Gasto</h5>
+                                <div class="mt-2">
+                                    <button class="btn btn-outline-primary btn-sm me-2" onclick="toggleFacturaUpload('gasto')">
+                                        <i class="bi bi-camera"></i> Subir Factura con AI
+                                    </button>
+                                    <small class="text-muted">O llena manualmente:</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="/agregar-gasto" method="POST">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Descripción" required>
+                                        <label for="descripcion">Descripción del gasto</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="monto" name="monto" min="0" max="999999999" placeholder="Monto" required>
+                                        <label for="monto">Monto ($)</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="categoria_id" name="categoria_id">
+                                            <option value="">Sin categoría</option>
+                                            <% categorias.filter(c => c.tipo_categoria === 'gasto').forEach(categoria => { %>
+                                                <option value="<%= categoria.id %>"><%= categoria.nombre %></option>
+                                            <% }) %>
+                                        </select>
+                                        <label for="categoria_id">Categoría</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="tipo_gasto" name="tipo_gasto">
+                                            <option value="variable">Variable</option>
+                                            <option value="fijo">Fijo</option>
+                                        </select>
+                                        <label for="tipo_gasto">Tipo de gasto</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control" id="fecha_gasto" name="fecha_gasto" value="<%= new Date().toISOString().split('T')[0] %>" required>
+                                        <label for="fecha_gasto">Fecha</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="metodo_pago" name="metodo_pago">
+                                            <option value="efectivo">Efectivo</option>
+                                            <option value="tarjeta_debito">Tarjeta de Débito</option>
+                                            <option value="tarjeta_credito">Tarjeta de Crédito</option>
+                                            <option value="transferencia">Transferencia</option>
+                                            <option value="otro">Otro</option>
+                                        </select>
+                                        <label for="metodo_pago">Método de pago</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <textarea class="form-control" id="observaciones" name="observaciones" style="height: 100px"></textarea>
+                                        <label for="observaciones">Observaciones (opcional)</label>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        <i class="bi bi-plus-circle"></i> Agregar Gasto
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de gastos -->
+                    <div class="col-md-8 mb-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bi bi-list-ul"></i> Lista de Gastos</h5>
+                                <span class="badge bg-danger">Total: $<%= parseFloat(totalGastosGeneral).toLocaleString('es-AR') %></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>Descripción</th>
+                                                <th>Categoría</th>
+                                                <th>Tipo</th>
+                                                <th>Método</th>
+                                                <th>Monto</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (gastos.length > 0) { %>
+                                                <% gastos.forEach(gasto => { %>
+                                                    <tr>
+                                                        <td><%= new Date(gasto.fecha_gasto).toLocaleDateString() %></td>
+                                                        <td>
+                                                            <%= gasto.descripcion %>
+                                                            <% if (gasto.observaciones) { %>
+                                                                <br><small class="text-muted"><%= gasto.observaciones %></small>
+                                                            <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <% if (gasto.categoria_nombre) { %>
+                                                                <span class="categoria-badge" style="background-color: <%= gasto.categoria_color %>">
+                                                                    <%= gasto.categoria_nombre %>
+                                                                </span>
+                                                            <% } else { %>
+                                                                <span class="text-muted">Sin categoría</span>
+                                                            <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge bg-<%= gasto.tipo_gasto === 'fijo' ? 'warning' : 'secondary' %>">
+                                                                <%= gasto.tipo_gasto %>
+                                                            </span>
+                                                        </td>
+                                                        <td><%= gasto.metodo_pago.replace('_', ' ') %></td>
+                                                        <td class="text-danger fw-bold">$<%= parseFloat(gasto.monto).toLocaleString('es-AR') %></td>
+                                                        <td>
+                                                            <button class="btn btn-outline-danger btn-sm" onclick="eliminarGasto(<%= gasto.id %>)">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                <% }) %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="7" class="text-center text-muted">No hay gastos registrados</td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña Ingresos -->
+            <div class="tab-pane fade" id="ingresos" role="tabpanel">
+                <div class="row">
+                    <!-- Formulario agregar ingreso -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Agregar Ingreso</h5>
+                                <div class="mt-2">
+                                    <button class="btn btn-outline-success btn-sm me-2" onclick="toggleFacturaUpload('ingreso')">
+                                        <i class="bi bi-camera"></i> Subir Comprobante con AI
+                                    </button>
+                                    <small class="text-muted">O llena manualmente:</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="/agregar-ingreso" method="POST">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="descripcion_ingreso" name="descripcion" placeholder="Descripción" required>
+                                        <label for="descripcion_ingreso">Descripción del ingreso</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <input type="number" class="form-control" id="monto_ingreso" name="monto" min="0" max="999999999" placeholder="Monto" required>
+                                        <label for="monto_ingreso">Monto ($)</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="categoria_id_ingreso" name="categoria_id">
+                                            <option value="">Sin categoría</option>
+                                            <% categorias.filter(c => c.tipo_categoria === 'ingreso').forEach(categoria => { %>
+                                                <option value="<%= categoria.id %>"><%= categoria.nombre %></option>
+                                            <% }) %>
+                                        </select>
+                                        <label for="categoria_id_ingreso">Categoría</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="tipo_ingreso" name="tipo_ingreso">
+                                            <option value="salario">Salario</option>
+                                            <option value="freelance">Freelance</option>
+                                            <option value="venta">Venta</option>
+                                            <option value="inversion">Inversión</option>
+                                            <option value="otro">Otro</option>
+                                        </select>
+                                        <label for="tipo_ingreso">Tipo de ingreso</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso" value="<%= new Date().toISOString().split('T')[0] %>" required>
+                                        <label for="fecha_ingreso">Fecha</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="fuente" name="fuente" placeholder="Fuente">
+                                        <label for="fuente">Fuente (opcional)</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <textarea class="form-control" id="observaciones_ingreso" name="observaciones" style="height: 100px"></textarea>
+                                        <label for="observaciones_ingreso">Observaciones (opcional)</label>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <i class="bi bi-plus-circle"></i> Agregar Ingreso
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de ingresos -->
+                    <div class="col-md-8 mb-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bi bi-list-ul"></i> Lista de Ingresos</h5>
+                                <span class="badge bg-success">Total: $<%= parseFloat(totalIngresosGeneral).toLocaleString('es-AR') %></span>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Fecha</th>
+                                                <th>Descripción</th>
+                                                <th>Categoría</th>
+                                                <th>Tipo</th>
+                                                <th>Fuente</th>
+                                                <th>Monto</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (ingresos.length > 0) { %>
+                                                <% ingresos.forEach(ingreso => { %>
+                                                    <tr>
+                                                        <td><%= new Date(ingreso.fecha_ingreso).toLocaleDateString() %></td>
+                                                        <td>
+                                                            <%= ingreso.descripcion %>
+                                                            <% if (ingreso.observaciones) { %>
+                                                                <br><small class="text-muted"><%= ingreso.observaciones %></small>
+                                                            <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <% if (ingreso.categoria_nombre) { %>
+                                                                <span class="categoria-badge" style="background-color: <%= ingreso.categoria_color %>">
+                                                                    <%= ingreso.categoria_nombre %>
+                                                                </span>
+                                                            <% } else { %>
+                                                                <span class="text-muted">Sin categoría</span>
+                                                            <% } %>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge bg-info">
+                                                                <%= ingreso.tipo_ingreso %>
+                                                            </span>
+                                                        </td>
+                                                        <td><%= ingreso.fuente || '-' %></td>
+                                                        <td class="text-success fw-bold">$<%= parseFloat(ingreso.monto).toLocaleString('es-AR') %></td>
+                                                        <td>
+                                                            <button class="btn btn-outline-danger btn-sm" onclick="eliminarIngreso(<%= ingreso.id %>)">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                <% }) %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="7" class="text-center text-muted">No hay ingresos registrados</td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña Categorías -->
+            <div class="tab-pane fade" id="categorias" role="tabpanel">
+                <div class="row">
+                    <!-- Formulario agregar categoría -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Agregar Categoría</h5>
+                            </div>
+                            <div class="card-body">
+                                <form action="/agregar-categoria" method="POST">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="nombre_categoria" name="nombre" placeholder="Nombre" required>
+                                        <label for="nombre_categoria">Nombre de la categoría</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <textarea class="form-control" id="descripcion_categoria" name="descripcion" style="height: 100px"></textarea>
+                                        <label for="descripcion_categoria">Descripción (opcional)</label>
+                                    </div>
+                                    
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="tipo_categoria" name="tipo_categoria">
+                                            <option value="gasto">Gasto</option>
+                                            <option value="ingreso">Ingreso</option>
+                                        </select>
+                                        <label for="tipo_categoria">Tipo</label>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="color" class="form-label">Color</label>
+                                        <input type="color" class="form-control form-control-color" id="color" name="color" value="#007bff">
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-plus-circle"></i> Agregar Categoría
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de categorías -->
+                    <div class="col-md-8 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-tags"></i> Categorías Existentes</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-danger"><i class="bi bi-arrow-down-circle"></i> Categorías de Gastos</h6>
+                                        <% categorias.filter(c => c.tipo_categoria === 'gasto').forEach(categoria => { %>
+                                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                                                <div>
+                                                    <span class="categoria-badge" style="background-color: <%= categoria.color %>">
+                                                        <%= categoria.nombre %>
+                                                    </span>
+                                                    <% if (categoria.descripcion) { %>
+                                                        <br><small class="text-muted"><%= categoria.descripcion %></small>
+                                                    <% } %>
+                                                </div>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary btn-sm" onclick="editarCategoria(<%= categoria.id %>)" title="Editar">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarCategoria(<%= categoria.id %>)" title="Eliminar">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-success"><i class="bi bi-arrow-up-circle"></i> Categorías de Ingresos</h6>
+                                        <% categorias.filter(c => c.tipo_categoria === 'ingreso').forEach(categoria => { %>
+                                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                                                <div>
+                                                    <span class="categoria-badge" style="background-color: <%= categoria.color %>">
+                                                        <%= categoria.nombre %>
+                                                    </span>
+                                                    <% if (categoria.descripcion) { %>
+                                                        <br><small class="text-muted"><%= categoria.descripcion %></small>
+                                                    <% } %>
+                                                </div>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary btn-sm" onclick="editarCategoria(<%= categoria.id %>)" title="Editar">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm" onclick="eliminarCategoria(<%= categoria.id %>)" title="Eliminar">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar categoría -->
+    <div class="modal fade" id="editarCategoriaModal" tabindex="-1" aria-labelledby="editarCategoriaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarCategoriaModalLabel">
+                        <i class="bi bi-pencil"></i> Editar Categoría
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formEditarCategoria">
+                        <input type="hidden" id="editCategoriaId" name="categoriaId">
+                        
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="editNombreCategoria" name="nombre" placeholder="Nombre" required>
+                            <label for="editNombreCategoria">Nombre de la categoría</label>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <textarea class="form-control" id="editDescripcionCategoria" name="descripcion" style="height: 100px"></textarea>
+                            <label for="editDescripcionCategoria">Descripción (opcional)</label>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="editColor" class="form-label">Color</label>
+                            <input type="color" class="form-control form-control-color" id="editColor" name="color" value="#007bff">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de categoría</label>
+                            <div class="form-control" id="editTipoCategoria" style="background-color: #f8f9fa; border: none;">
+                                <!-- Se llenará dinámicamente -->
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="guardarCambiosCategoria()">
+                        <i class="bi bi-check-circle"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 mt-5">
+        <div class="container">
+            <p class="text-muted mb-0">
+                <i class="bi bi-house-heart"></i> Casa Gastos v1.0 - Gestiona las finanzas de tu hogar
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Función para eliminar gasto
+        async function eliminarGasto(id) {
+            if (confirm('¿Estás seguro de eliminar este gasto?')) {
+                try {
+                    const response = await fetch(`/gastos/${id}`, { method: 'DELETE' });
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error eliminando gasto');
+                    }
+                } catch (error) {
+                    alert('Error eliminando gasto');
+                }
+            }
+        }
+
+        // Función para eliminar ingreso
+        async function eliminarIngreso(id) {
+            if (confirm('¿Estás seguro de eliminar este ingreso?')) {
+                try {
+                    const response = await fetch(`/ingresos/${id}`, { method: 'DELETE' });
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Error eliminando ingreso');
+                    }
+                } catch (error) {
+                    alert('Error eliminando ingreso');
+                }
+            }
+        }
+
+        // Función para eliminar categoría
+        async function eliminarCategoria(id) {
+            if (confirm('¿Estás seguro de eliminar esta categoría? Solo se puede eliminar si no tiene gastos o ingresos asociados.')) {
+                try {
+                    const response = await fetch(`/categorias/${id}`, { method: 'DELETE' });
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        alert('Categoría eliminada correctamente');
+                        location.reload();
+                    } else {
+                        alert(result.error || 'Error eliminando categoría');
+                    }
+                } catch (error) {
+                    alert('Error eliminando categoría');
+                }
+            }
+        }
+
+        // Función para editar categoría
+        async function editarCategoria(id) {
+            try {
+                // Obtener datos de la categoría
+                const response = await fetch(`/api/categorias/${id}`);
+                const categoria = await response.json();
+                
+                if (response.ok) {
+                    // Llenar el modal con los datos
+                    document.getElementById('editCategoriaId').value = categoria.id;
+                    document.getElementById('editNombreCategoria').value = categoria.nombre;
+                    document.getElementById('editDescripcionCategoria').value = categoria.descripcion || '';
+                    document.getElementById('editColor').value = categoria.color;
+                    
+                    // Mostrar el tipo de categoría (no editable)
+                    const tipoDiv = document.getElementById('editTipoCategoria');
+                    const tipoIcon = categoria.tipo_categoria === 'gasto' ? 'arrow-down-circle' : 'arrow-up-circle';
+                    const tipoColor = categoria.tipo_categoria === 'gasto' ? 'danger' : 'success';
+                    const tipoTexto = categoria.tipo_categoria === 'gasto' ? 'Gasto' : 'Ingreso';
+                    
+                    tipoDiv.innerHTML = `<i class="bi bi-${tipoIcon} text-${tipoColor}"></i> ${tipoTexto}`;
+                    
+                    // Mostrar el modal
+                    const modal = new bootstrap.Modal(document.getElementById('editarCategoriaModal'));
+                    modal.show();
+                } else {
+                    alert('Error cargando datos de la categoría');
+                }
+            } catch (error) {
+                alert('Error cargando datos de la categoría');
+            }
+        }
+
+        // Función para guardar cambios de categoría
+        async function guardarCambiosCategoria() {
+            try {
+                const id = document.getElementById('editCategoriaId').value;
+                const nombre = document.getElementById('editNombreCategoria').value;
+                const descripcion = document.getElementById('editDescripcionCategoria').value;
+                const color = document.getElementById('editColor').value;
+                
+                if (!nombre.trim()) {
+                    alert('El nombre de la categoría es obligatorio');
+                    return;
+                }
+                
+                const response = await fetch(`/categorias/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nombre: nombre.trim(),
+                        descripcion: descripcion.trim() || null,
+                        color: color
+                    })
+                });
+                
+                if (response.ok) {
+                    alert('Categoría actualizada correctamente');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editarCategoriaModal'));
+                    modal.hide();
+                    location.reload();
+                } else {
+                    const result = await response.json();
+                    alert(result.error || 'Error actualizando categoría');
+                }
+            } catch (error) {
+                alert('Error actualizando categoría');
+            }
+        }
+
+        // Funciones para procesamiento de facturas con AI
+        function toggleFacturaUpload(tipo) {
+            const uploadDiv = document.getElementById(`facturaUpload-${tipo}`);
+            const formManual = document.getElementById(`form-${tipo}-manual`);
+            
+            if (uploadDiv.style.display === 'none') {
+                uploadDiv.style.display = 'block';
+                formManual.style.display = 'none';
+            } else {
+                uploadDiv.style.display = 'none';
+                formManual.style.display = 'block';
+                // Limpiar resultados previos
+                document.getElementById(`aiResults-${tipo}`).style.display = 'none';
+                document.getElementById(`facturaFile-${tipo}`).value = '';
+            }
+        }
+
+        async function procesarFactura(tipo) {
+            const fileInput = document.getElementById(`facturaFile-${tipo}`);
+            const file = fileInput.files[0];
+            
+            if (!file) return;
+            
+            // Validar tipo de archivo
+            if (!file.type.startsWith('image/')) {
+                alert('Por favor selecciona una imagen válida');
+                return;
+            }
+            
+            // Validar tamaño (10MB máximo)
+            if (file.size > 10 * 1024 * 1024) {
+                alert('El archivo es muy grande. Tamaño máximo: 10MB');
+                return;
+            }
+            
+            // Mostrar estado de procesamiento
+            document.getElementById(`processingStatus-${tipo}`).style.display = 'block';
+            document.getElementById(`aiResults-${tipo}`).style.display = 'none';
+            
+            try {
+                const formData = new FormData();
+                formData.append('factura', file);
+                
+                const response = await fetch('/api/procesar-factura', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const resultado = await response.json();
+                
+                // Ocultar estado de procesamiento
+                document.getElementById(`processingStatus-${tipo}`).style.display = 'none';
+                
+                if (resultado.success) {
+                    mostrarResultadosAI(tipo, resultado);
+                } else {
+                    alert('Error procesando la factura: ' + (resultado.error || 'Error desconocido'));
+                }
+                
+            } catch (error) {
+                document.getElementById(`processingStatus-${tipo}`).style.display = 'none';
+                alert('Error procesando la factura');
+                console.error('Error:', error);
+            }
+        }
+
+        function mostrarResultadosAI(tipo, resultado) {
+            const resultsDiv = document.getElementById(`aiResults-${tipo}`);
+            const datos = resultado.datos;
+            const confianza = Math.round(datos.confianza * 100);
+            
+            resultsDiv.innerHTML = `
+                <div class="alert alert-success">
+                    <h6><i class="bi bi-check-circle"></i> Factura procesada exitosamente (${confianza}% confianza)</h6>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <strong>Datos extraídos:</strong>
+                            <ul class="list-unstyled mt-2">
+                                <li><strong>Descripción:</strong> ${datos.descripcion}</li>
+                                <li><strong>Monto:</strong> $${parseFloat(datos.monto).toLocaleString('es-AR')}</li>
+                                <li><strong>Fecha:</strong> ${new Date(datos.fecha).toLocaleDateString()}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <img src="${resultado.imagen_url}" class="img-fluid rounded" style="max-height: 150px;" alt="Factura">
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-primary me-2" onclick="confirmarFacturaAI('${tipo}', ${JSON.stringify(resultado).replace(/"/g, '&quot;')})">
+                            <i class="bi bi-check"></i> Confirmar y Guardar
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="editarDatosAI('${tipo}', ${JSON.stringify(datos).replace(/"/g, '&quot;')}, '${resultado.imagen_url}')">
+                            <i class="bi bi-pencil"></i> Editar Antes de Guardar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+
+        async function confirmarFacturaAI(tipo, resultado) {
+            try {
+                const datos = resultado.datos;
+                
+                const payload = {
+                    tipo: tipo,
+                    descripcion: datos.descripcion,
+                    monto: datos.monto,
+                    categoria_id: datos.categoria_sugerida,
+                    fecha: datos.fecha,
+                    imagen_url: resultado.imagen_url,
+                    metodo_pago: tipo === 'gasto' ? 'otro' : undefined,
+                    fuente: tipo === 'ingreso' ? 'AI Processing' : undefined,
+                    observaciones: `Procesado con AI (${Math.round(datos.confianza * 100)}% confianza)`
+                };
+                
+                const response = await fetch('/api/confirmar-factura', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Factura guardada correctamente con AI');
+                    location.reload();
+                } else {
+                    alert('Error guardando la factura: ' + result.error);
+                }
+                
+            } catch (error) {
+                alert('Error guardando la factura');
+                console.error('Error:', error);
+            }
+        }
+
+        function editarDatosAI(tipo, datos, imagenUrl) {
+            // Llenar el formulario manual con los datos extraídos por AI
+            toggleFacturaUpload(tipo); // Mostrar formulario manual
+            
+            if (tipo === 'gasto') {
+                document.getElementById('descripcion').value = datos.descripcion;
+                document.getElementById('monto').value = datos.monto;
+                document.getElementById('fecha_gasto').value = datos.fecha;
+                if (datos.categoria_sugerida) {
+                    document.getElementById('categoria_id').value = datos.categoria_sugerida;
+                }
+            } else {
+                document.getElementById('descripcion_ingreso').value = datos.descripcion;
+                document.getElementById('monto_ingreso').value = datos.monto;
+                document.getElementById('fecha_ingreso').value = datos.fecha;
+                if (datos.categoria_sugerida) {
+                    document.getElementById('categoria_id_ingreso').value = datos.categoria_sugerida;
+                }
+            }
+            
+            // Mostrar notificación
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-info alert-dismissible fade show mt-2';
+            notification.innerHTML = `
+                <i class="bi bi-info-circle"></i> Datos extraídos con AI cargados en el formulario. Puedes editarlos antes de guardar.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.getElementById(`form-${tipo}-manual`).prepend(notification);
+        }
+
+        // Mejorar experiencia de entrada de números con formato argentino
+        document.addEventListener('DOMContentLoaded', function() {
+            const montoInputs = document.querySelectorAll('input[type="number"]');
+            montoInputs.forEach(input => {
+                // Remover el auto-formateo que interfiere con la escritura
+                input.removeAttribute('step');
+                
+                // Agregar placeholder que muestre el formato esperado
+                if (input.name === 'monto') {
+                    input.setAttribute('placeholder', 'Ej: 150000');
+                }
+                
+                // Solo formatear cuando se pierde el foco
+                input.addEventListener('blur', function() {
+                    if (this.value && !isNaN(this.value)) {
+                        // Mostrar el número formateado en el title para referencia
+                        const formatted = parseFloat(this.value).toLocaleString('es-AR', {
+                            style: 'currency',
+                            currency: 'ARS',
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2
+                        });
+                        this.setAttribute('title', `Formato: ${formatted}`);
+                    }
+                });
+                
+                // Mostrar formato en tiempo real en el label
+                input.addEventListener('input', function() {
+                    const label = document.querySelector(`label[for="${this.id}"]`);
+                    if (label && this.value && !isNaN(this.value)) {
+                        const formatted = parseFloat(this.value).toLocaleString('es-AR');
+                        const originalText = label.textContent.split(' - ')[0];
+                        label.textContent = `${originalText} - $${formatted}`;
+                    } else if (label) {
+                        const originalText = label.textContent.split(' - ')[0];
+                        label.textContent = originalText;
+                    }
+                });
+                
+                // Validación de entrada
+                input.addEventListener('keypress', function(e) {
+                    // Permitir: backspace, delete, tab, escape, enter
+                    if ([46, 8, 9, 27, 13].indexOf(e.keyCode) !== -1 ||
+                        // Permitir Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                        (e.keyCode === 65 && e.ctrlKey === true) ||
+                        (e.keyCode === 67 && e.ctrlKey === true) ||
+                        (e.keyCode === 86 && e.ctrlKey === true) ||
+                        (e.keyCode === 88 && e.ctrlKey === true)) {
+                        return;
+                    }
+                    // Asegurar que es un número
+                    if (e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
