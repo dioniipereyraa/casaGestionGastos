@@ -748,17 +748,19 @@ app.get('/api/estadisticas', async (req, res) => {
 // Función para iniciar el servidor
 async function startServer() {
   try {
-    // Inicializar base de datos en Railway
-    if (process.env.NODE_ENV === 'production') {
-      console.log('🔧 Inicializando base de datos...');
-      const dbInitialized = await initializeDatabase();
-      if (!dbInitialized) {
-        console.error('❌ Error: No se pudo inicializar la base de datos');
-        process.exit(1);
-      }
-      // Pequeña pausa para asegurar que todo esté listo
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    }
+    // Comentar temporalmente la inicialización para debugging
+    // if (process.env.NODE_ENV === 'production') {
+    //   console.log('🔧 Inicializando base de datos...');
+    //   const dbInitialized = await initializeDatabase();
+    //   if (!dbInitialized) {
+    //     console.error('❌ Error: No se pudo inicializar la base de datos');
+    //     process.exit(1);
+    //   }
+    //   // Pequeña pausa para asegurar que todo esté listo
+    //   await new Promise(resolve => setTimeout(resolve, 2000));
+    // }
+    
+    console.log('🚀 Iniciando servidor sin inicialización de DB...');
     
     // Iniciar servidor
     const server = app.listen(PORT, '0.0.0.0', () => {
