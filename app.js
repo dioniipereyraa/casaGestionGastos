@@ -7,6 +7,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const fs = require('fs');
 const OpenAI = require('openai');
+const { initializeDatabase } = require('./init-db');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -724,7 +725,18 @@ app.get('/api/estadisticas', async (req, res) => {
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🏠 Servidor Casa Gastos corriendo en puerto ${PORT}`);
-  console.log(`📊 Dashboard disponible en: http://localhost:${PORT}`);
-});
+// Función para iniciar el servidor
+async function startServer() {
+  // Inicializar base de datos en Railway
+  if (process.env.NODE_ENV === 'production') {
+    console.log('🔧 Inicializando base de datos...');
+    await initializeDatabase();
+  }
+  
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🏠 Servidor Casa Gastos corriendo en puerto ${PORT}`);
+    console.log(`📊 Dashboard disponible en: http://localhost:${PORT}`);
+  });
+}
+
+startServer();
