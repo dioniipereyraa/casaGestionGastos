@@ -2,22 +2,35 @@ const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 async function initializeDatabase() {
-    const dbConfig = {
+    // Primero conectar sin especificar base de datos para crearla
+    const dbConfigRoot = {
         host: process.env.DB_HOST,
         port: process.env.DB_PORT || 3306,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD
     };
 
+    // Luego conectar a la base de datos específica
+    const dbConfig = {
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT || 3306,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: 'casaGastos'
+    };
+
     try {
         console.log('🔄 Conectando a MySQL...');
-        const connection = await mysql.createConnection(dbConfig);
+        let connection = await mysql.createConnection(dbConfigRoot);
         
         console.log('✅ Conexión exitosa. Creando base de datos...');
         
         // Primero crear la base de datos
         await connection.execute('CREATE DATABASE IF NOT EXISTS casaGastos');
-        await connection.execute('USE casaGastos');
+        await connection.end();
+        
+        // Ahora conectar a la base de datos específica
+        connection = await mysql.createConnection(dbConfig);
         
         console.log('📊 Creando tablas...');
         
