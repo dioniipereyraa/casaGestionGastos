@@ -55,9 +55,21 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Servir 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Configurar cabeceras de seguridad en producción
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.removeHeader('X-Powered-By');
+    next();
+  });
+}
+
 // Configuración de la base de datos
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
+  port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'root123',
   database: process.env.DB_NAME || 'casaGastos',
@@ -93,9 +105,11 @@ async function procesarFacturaConAI(imagePath) {
     const base64Image = imageBuffer.toString('base64');
     const mimeType = imagePath.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
     
-    // Llamar a OpenAI Vision API
+    // Llamar a OpenAI Vision API 
+    // Modelos disponibles: "gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"
+    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: model, // Configurable desde .env
       messages: [
         {
           role: "user",
@@ -421,6 +435,15 @@ app.delete('/ingresos/:id', async (req, res) => {
 app.post('/agregar-categoria', async (req, res) => {
   try {
     const { nombre, descripcion, tipo_categoria, color } = req.body;
+    
+    // Validar que se reciban los datos requeridos
+    if (!nombre || !tipo_categoria) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'El nombre y tipo de categoría son requeridos' 
+      });
+    }
+    
     const connection = await connectDB();
     
     await connection.execute(
@@ -430,10 +453,28 @@ app.post('/agregar-categoria', async (req, res) => {
     );
     
     await connection.end();
-    res.redirect('/');
+    
+    // Si es una petición AJAX, responder con JSON
+    if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
+      res.json({ success: true, message: 'Categoría agregada exitosamente' });
+    } else {
+      res.redirect('/');
+    }
   } catch (error) {
     console.error('Error agregando categoría:', error);
-    res.status(500).send('Error agregando categoría');
+    
+    if (error.code === 'ER_DUP_ENTRY') {
+      // Error de nombre duplicado
+      res.status(400).json({ 
+        success: false, 
+        error: `Ya existe una categoría con el nombre "${nombre}". Por favor, elige otro nombre.` 
+      });
+    } else {
+      res.status(500).json({ 
+        success: false, 
+        error: 'Error interno del servidor al agregar la categoría' 
+      });
+    }
   }
 });
 

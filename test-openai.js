@@ -7,10 +7,11 @@ const openai = new OpenAI({
 
 async function testOpenAI() {
   try {
-    console.log('🧪 Probando conexión con OpenAI...');
+    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+    console.log(`🧪 Probando conexión con OpenAI usando modelo: ${model}...`);
     
     const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: model,
       messages: [
         {
           role: "user", 

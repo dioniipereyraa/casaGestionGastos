@@ -1,0 +1,186 @@
+.card-header {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    color: white;
+}
+
+.stats-card {
+    border-left: 4px solid;
+    transition: transform 0.2s;
+}
+
+.stats-card:hover {
+    transform: translateY(-2px);
+}
+
+.gastos-card { 
+    border-left-color: #dc3545; 
+}
+
+.ingresos-card { 
+    border-left-color: #28a745; 
+}
+
+.balance-card { 
+    border-left-color: #17a2b8; 
+}
+
+.balance-positivo { 
+    color: #28a745; 
+}
+
+.balance-negativo { 
+    color: #dc3545; 
+}
+
+.categoria-badge {
+    border-radius: 15px;
+    padding: 4px 8px;
+    font-size: 0.8em;
+    color: white;
+}
+
+.nav-pills .nav-link {
+    margin: 0 5px;
+    border-radius: 20px;
+}
+
+.nav-pills .nav-link.active {
+    background: linear-gradient(45deg, #28a745, #20c997);
+}
+
+.form-floating > .form-select {
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+}
+
+.category-stats {
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.ai-upload-area {
+    border: 2px dashed #007bff;
+    border-radius: 10px;
+    padding: 30px;
+    text-align: center;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ai-upload-area:hover {
+    background: #e9ecef;
+    border-color: #0056b3;
+}
+
+.ai-upload-area.dragover {
+    background: #cce5ff;
+    border-color: #004085;
+}
+
+.upload-progress {
+    display: none;
+}
+
+.ai-result {
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    border: 1px solid #28a745;
+    background: #d4edda;
+}
+
+/* Flow Chart Styles */
+.flow-legend {
+    background: rgba(255,255,255,0.9);
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.flow-summary {
+    background: rgba(255,255,255,0.5);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.flow-categories {
+    background: rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+#flowChart {
+}
+
+/* Sankey Diagram Styles */
+#sankeyChart {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.sankey-tooltip {
+    z-index: 1000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+#sankeyChart svg {
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+}
+
+/* Responsividad para móviles y tablets */
+@media (max-width: 992px) {
+    .flow-legend {
+        display: none !important;
+    }
+    
+    #sankeyChart {
+        height: 300px !important;
+        padding: 10px;
+    }
+    
+    #mobilePieChart {
+        max-height: 280px !important;
+    }
+    
+    .card-body .row {
+        margin: 0;
+    }
+    
+    .card-body .col-md-9 {
+        padding: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    #sankeyChart {
+        height: 250px !important;
+        padding: 5px;
+    }
+    
+    #mobilePieChart {
+        max-height: 220px !important;
+    }
+    
+    .card-header h5 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    #sankeyChart {
+        height: 200px !important;
+    }
+    
+    #mobilePieChart {
+        max-height: 180px !important;
+    }
+}

@@ -34,3 +34,14 @@ Thumbs.db
 # Archivos temporales
 tmp/
 temp/
+
+# Archivos subidos por usuarios (pueden contener información privada)
+uploads/
+
+# Archivos minificados generados automáticamente
+public/js/*.min.js
+public/css/*.min.css
+
+# Archivos de test y coverage
+coverage/
+.nyc_output
