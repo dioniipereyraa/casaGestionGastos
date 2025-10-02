@@ -735,7 +735,8 @@ async function startServer() {
   
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`🏠 Servidor Casa Gastos corriendo en puerto ${PORT}`);
-    console.log(`📊 Dashboard disponible en: http://localhost:${PORT}`);
+    console.log(`📊 Dashboard disponible en producción`);
+    console.log(`✅ Aplicación lista para recibir conexiones`);
   });
 }
 
