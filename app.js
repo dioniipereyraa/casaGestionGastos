@@ -261,6 +261,26 @@ function obtenerCategoriaTextoAleatoria() {
   return categorias[Math.floor(Math.random() * categorias.length)];
 }
 
+// Health check para Railway
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    service: 'casa-gastos',
+    database: 'connected'
+  });
+});
+
+// Status check simple
+app.get('/status', (req, res) => {
+  res.status(200).send('OK');
+});
+
+// Ping endpoint
+app.get('/ping', (req, res) => {
+  res.status(200).send('pong');
+});
+
 // Ruta principal - Dashboard
 app.get('/', async (req, res) => {
   try {
