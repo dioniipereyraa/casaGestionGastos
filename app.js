@@ -747,17 +747,45 @@ app.get('/api/estadisticas', async (req, res) => {
 
 // Función para iniciar el servidor
 async function startServer() {
-  // Inicializar base de datos en Railway
-  if (process.env.NODE_ENV === 'production') {
-    console.log('🔧 Inicializando base de datos...');
-    await initializeDatabase();
+  try {
+    // Inicializar base de datos en Railway
+    if (process.env.NODE_ENV === 'production') {
+      console.log('🔧 Inicializando base de datos...');
+      const dbInitialized = await initializeDatabase();
+      if (!dbInitialized) {
+        console.error('❌ Error: No se pudo inicializar la base de datos');
+        process.exit(1);
+      }
+    }
+    
+    // Iniciar servidor
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🏠 Servidor Casa Gastos corriendo en puerto ${PORT}`);
+      console.log(`📊 Dashboard disponible en producción`);
+      console.log(`✅ Aplicación lista para recibir conexiones`);
+    });
+    
+    // Manejar señales de cierre graceful
+    process.on('SIGTERM', () => {
+      console.log('📥 Recibida señal SIGTERM, cerrando servidor...');
+      server.close(() => {
+        console.log('✅ Servidor cerrado correctamente');
+        process.exit(0);
+      });
+    });
+    
+    process.on('SIGINT', () => {
+      console.log('📥 Recibida señal SIGINT, cerrando servidor...');
+      server.close(() => {
+        console.log('✅ Servidor cerrado correctamente');
+        process.exit(0);
+      });
+    });
+    
+  } catch (error) {
+    console.error('❌ Error iniciando servidor:', error);
+    process.exit(1);
   }
-  
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🏠 Servidor Casa Gastos corriendo en puerto ${PORT}`);
-    console.log(`📊 Dashboard disponible en producción`);
-    console.log(`✅ Aplicación lista para recibir conexiones`);
-  });
 }
 
 startServer();
