@@ -756,6 +756,8 @@ async function startServer() {
         console.error('❌ Error: No se pudo inicializar la base de datos');
         process.exit(1);
       }
+      // Pequeña pausa para asegurar que todo esté listo
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
     
     // Iniciar servidor
